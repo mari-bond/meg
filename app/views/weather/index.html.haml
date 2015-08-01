@@ -1,0 +1,20 @@
+.weather{ 'ng-controller' => 'WeatherController' }
+  %h1 Random weather
+  %p{'ng-repeat' => '(key, value) in randomWeather' }
+    {{ key | uppercase }}:
+    {{ value }}
+
+  %h1 Weather in a city
+  %form{ 'ng-submit' => "search()" }
+    %p
+      %label City
+      %input{ 'ng-model' => 'searchWeather.city' }
+    %p
+      %label Country
+      %input{ 'ng-model' => 'searchWeather.country' }
+    %p
+      %input{ type: 'submit' }
+  %p{'ng-repeat' => '(key, value) in weather' }
+    {{ key | uppercase }}:
+    {{ value }}
+  %h4 {{ error }}
