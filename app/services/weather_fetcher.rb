@@ -9,7 +9,13 @@ class WeatherFetcher
 
   def fetch
     return unless @city_name
-    request({ q: [@city_name, @country_name].compact.join(',') })
+    weather = Weather.by_country(@country_name).by_city(@city_name).first
+    unless weather
+      weather = request({ q: [@city_name, @country_name].compact.join(',') })
+      weather.save if weather
+    end
+
+    weather
   end
 
   def fetch_random
@@ -32,8 +38,21 @@ class WeatherFetcher
   def request(params)
     response = connection.get(weather_data_path, params)
     if response.status == 200
-      JSON.parse response.body
+      build_weather JSON.parse response.body
     end
+  end
+
+  def build_weather(data)
+    return unless data && data['cod'].to_i == 200
+    Weather.new(
+      city: @city_name,
+      country: @country_name,
+      description: data['weather'][0]['description'],
+      temp: data['main']['temp'],
+      pressure: data['main']['pressure'],
+      humidity: data['main']['humidity'],
+      wind: data['wind']['speed']
+    )
   end
 
   def connection
