@@ -8,6 +8,7 @@ crtl = ($scope, weatherFactory) ->
       $scope.error = null
       $scope.weather = data.weather
     , (failResponse) ->
+      $scope.weather = null
       $scope.error = 'The city could not be found'
     )
 
